@@ -1,16 +1,20 @@
-FROM microsoft/dotnet:sdk AS build-env
+FROM microsoft/dotnet:2.1-aspnetcore-runtime AS base
 WORKDIR /app
+EXPOSE 59518
+EXPOSE 44364
 
-# Copy csproj and restore as distinct layers
-COPY *.csproj ./
-RUN dotnet restore
+FROM microsoft/dotnet:2.1-sdk AS build
+WORKDIR /src
+COPY api.livraria.auth/api.livraria.auth.csproj api.livraria.auth.docker/
+RUN dotnet restore api.livraria.auth.docker/api.livraria.auth.docker.csproj
+COPY . .
+WORKDIR /src/api.livraria.auth.docker
+RUN dotnet build api.livraria.auth.docker.csproj -c Release -o /app
 
-# Copy everything else and build
-COPY . ./
-RUN dotnet publish -c Release -o out
+FROM build AS publish
+RUN dotnet publish api.livraria.auth.docker.csproj -c Release -o /app
 
-# Build runtime image
-FROM microsoft/dotnet:aspnetcore-runtime
+FROM base AS final
 WORKDIR /app
-COPY --from=build-env /app/out .
-ENTRYPOINT ["dotnet", "api.livraria.auth.dll"]
+COPY --from=publish /app .
+ENTRYPOINT ["dotnet", "api.livraria.auth.docker.dll"]
