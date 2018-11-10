@@ -1,8 +1,9 @@
-<b>.Net Core Web Api with Docker</b>
+<b>.Net Core Web Api with Docker</b><br>
 api.livriaria.auth WebApi self contained in a Docker container.
 <hr>
 <b>How to build it:</b>
 <hr>
+<br>
 1 - Open PowerShell or CMD and navigate to the api.livraria.auth folder.
 
 2 - Run both commmands:
